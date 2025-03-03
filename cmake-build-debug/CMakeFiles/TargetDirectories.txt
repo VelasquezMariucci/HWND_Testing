@@ -1,0 +1,3 @@
+C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/cmake-build-debug/CMakeFiles/HWND_Testing.dir
+C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/cmake-build-debug/CMakeFiles/rebuild_cache.dir
