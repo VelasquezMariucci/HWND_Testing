@@ -165918,8 +165918,9 @@ using namespace std;
 
 
 using tstring = basic_string<TCHAR>;
-# 19 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
-struct WindowInfo {
+# 20 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+struct WindowInfo
+{
     tstring title;
     tstring className;
     RECT windowRect;
@@ -165927,28 +165928,30 @@ struct WindowInfo {
     DWORD threadId;
 };
 
+
 BOOL __attribute__((__stdcall__)) 
-# 27 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
-             getWindowInfo(HWND hwnd, LPARAM lParam) {
+# 30 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+             getWindowInfo(HWND hwnd, LPARAM lParam)
+{
     const DWORD TITLE_SIZE = 1024;
     TCHAR windowTitle[TITLE_SIZE];
     TCHAR windowClassName[TITLE_SIZE];
 
     
-# 32 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+# 36 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
    GetWindowTextA
-# 32 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+# 36 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
                 (hwnd, windowTitle, TITLE_SIZE);
     int length = 
-# 33 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+# 37 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
                 GetWindowTextLengthA
-# 33 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+# 37 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
                                    (hwnd);
 
     
-# 35 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+# 39 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
    GetClassNameA
-# 35 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+# 39 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
                (hwnd, windowClassName, TITLE_SIZE);
 
     RECT rect;
@@ -165957,43 +165960,79 @@ BOOL __attribute__((__stdcall__))
     DWORD processId;
     DWORD threadId = GetWindowThreadProcessId(hwnd, &processId);
 
-    if (!IsWindowVisible(hwnd) || length == 0 || tstring(windowTitle) == "Program Manager") {
+    if (!IsWindowVisible(hwnd) || length == 0)
+    {
         return 
-# 44 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+# 49 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
               1
-# 44 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+# 49 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
                   ;
     }
 
-    WindowInfo winInfo = { windowTitle, windowClassName, rect, processId, threadId };
+    WindowInfo winInfo = {windowTitle, windowClassName, rect, processId, threadId};
     vector<WindowInfo>* vec = reinterpret_cast<vector<WindowInfo>*>(lParam);
     vec->push_back(winInfo);
 
     return 
-# 51 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+# 56 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
           1
-# 51 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+# 56 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
               ;
 }
 
-void printWindowInfo(const vector<WindowInfo>& windows) {
-    for (const auto& win : windows) {
+void printWindowInfo(const vector<WindowInfo>& windows)
+{
+    for (const auto& win : windows)
+    {
         cout << "Title: " << win.title << endl;
         cout << "Class: " << win.className << endl;
         cout << "Position: (" << win.windowRect.left << ", " << win.windowRect.top
-              << ") - (" << win.windowRect.right << ", " << win.windowRect.bottom << ")" << endl;
+            << ") - (" << win.windowRect.right << ", " << win.windowRect.bottom << ")" << endl;
         cout << "Process ID: " << win.processId << endl;
         cout << "Thread ID: " << win.threadId << endl;
         cout << "------------------------------------------" << endl;
     }
 }
 
-int main() {
+void bringWindowToFront(const tstring& text, const vector<WindowInfo>& windows)
+{
+    for (const WindowInfo& w : windows)
+    {
+        if (w.title.find(text) != tstring::npos || w.className.find(text) != tstring::npos)
+        {
+            HWND hwnd = 
+# 79 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+                       FindWindowA
+# 79 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+                                 (w.className.c_str(), w.title.c_str());
+            if (hwnd != 
+# 80 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3 4
+                       __null
+# 80 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+                           )
+            {
+                ShowWindow(hwnd, 
+# 82 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp" 3
+                                9
+# 82 "C:/Users/esvel/OneDrive/Documents/GitHub/HWND_Testing/main.cpp"
+                                          );
+                SetForegroundWindow(hwnd);
+
+                cout << "Brought window to front: " << w.title << endl;
+                return;
+            }
+        }
+    }
+    cout << "No matching window found for: " << text << endl;
+}
+
+int main()
+{
     vector<WindowInfo> windows;
 
     EnumWindows(getWindowInfo, reinterpret_cast<LPARAM>(&windows));
 
-    printWindowInfo(windows);
+    bringWindowToFront("Task Manager", windows);
 
     cin.get();
     return 0;

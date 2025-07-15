@@ -1,0 +1,3 @@
+"C:\Program Files\JetBrains\CLion 2024.3.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\LiveWallpaperBand.dir/objects.a
+C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\LiveWallpaperBand.dir/objects.a @CMakeFiles\LiveWallpaperBand.dir\objects1.rsp
+C:\msys64\mingw64\bin\c++.exe -g -shared -o LiveWallpaperBand.dll -Wl,--out-implib,libLiveWallpaperBand.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles\LiveWallpaperBand.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\LiveWallpaperBand.dir\linkLibs.rsp
